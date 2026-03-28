@@ -2,33 +2,45 @@ pipeline {
     agent any
 
     environment {
-        INVENTORY = 'inventory'
-        PLAYBOOK = 'Projectnginx.yaml'
-        PEM_FILE = "${WORKSPACE}/devops.pem"
-        USER = 'ec2-user'
+        ANSIBLE_PRIVATE_KEY = "${WORKSPACE}/devops.pem"
     }
 
     stages {
+
         stage('Setup SSH Known Hosts') {
             steps {
-                sh '''
+                // Create .ssh directory in Jenkins workspace
+                sh """
                     mkdir -p ~/.ssh
                     chmod 700 ~/.ssh
-                    grep -v '^#' ${INVENTORY} | grep -E '^[0-9]' | awk '{print $1}' | while read ip; do
-                        ssh-keyscan -H $ip >> ~/.ssh/known_hosts
+                    # Add all IPs from inventory to known_hosts
+                    for ip in \$(grep -E '^[0-9]' inventory); do
+                        ssh-keyscan -H \$ip >> ~/.ssh/known_hosts
                     done
                     chmod 644 ~/.ssh/known_hosts
-                '''
+                """
             }
         }
 
         stage('Run Ansible Playbook') {
             steps {
                 sh """
-                    ansible-playbook ${PLAYBOOK} -i ${INVENTORY} \
-                    --private-key ${PEM_FILE} -u ${USER}
+                    # Make sure PEM file has correct permissions
+                    chmod 400 ${ANSIBLE_PRIVATE_KEY}
+                    # Run your Ansible playbook
+                    ansible-playbook Projectnginx.yaml -i inventory \
+                        --private-key ${ANSIBLE_PRIVATE_KEY} -u ec2-user
                 """
             }
+        }
+    }
+
+    post {
+        success {
+            echo "🎉 Ansible playbook executed successfully!"
+        }
+        failure {
+            echo "❌ Pipeline failed. Check the errors above."
         }
     }
 }
