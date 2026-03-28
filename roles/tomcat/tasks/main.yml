@@ -1,0 +1,60 @@
+---
+# tasks file for tomcat
+- name: Update packages
+  yum:
+    name: "*"
+    state: latest
+
+- name: Install Java and wget
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - java-11-amazon-corretto
+    - wget
+
+- name: Download Tomcat
+  get_url:
+    url: "{{ tomcat_url }}"
+    dest: /opt/tomcat.tar.gz
+
+- name: Extract Tomcat
+  unarchive:
+    src: /opt/tomcat.tar.gz
+    dest: /opt/
+    remote_src: yes
+  args:
+    creates: "/opt/apache-tomcat-{{ tomcat_version }}"
+
+- name: Rename Tomcat
+  command: mv /opt/apache-tomcat-{{ tomcat_version }} {{ tomcat_install_dir }}
+  args:
+    creates: "{{ tomcat_install_dir }}"
+
+- name: Set permissions
+  file:
+    path: "{{ tomcat_install_dir }}"
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+    recurse: yes
+
+- name: Create Tomcat service file
+  template:
+    src: tomcat.service.j2
+    dest: /etc/systemd/system/tomcat.service
+  notify: restart tomcat
+
+- name: Reload systemd
+  command: systemctl daemon-reload
+
+- name: Start Tomcat
+  service:
+    name: tomcat
+    state: started
+    enabled: yes
+
+- name: Deploy simple HTML page
+  template:
+    src: index.html.tomcat.j2
+    dest: "{{ tomcat_install_dir }}/webapps/ROOT/index.html"
+  notify: restart tomcat

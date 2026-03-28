@@ -1,0 +1,10 @@
+---
+# vars file for tomcat
+tomcat_version: 9.0.115
+tomcat_install_dir: /opt/tomcat
+tomcat_user: ec2-user
+tomcat_group: ec2-user
+
+tomcat_url: "https://dlcdn.apache.org/tomcat/tomcat-9/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
+
+java_home: /usr/lib/jvm/java-11-amazon-corretto

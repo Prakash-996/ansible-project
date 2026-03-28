@@ -1,0 +1,5 @@
+[nginx]
+localhost ansible_connection=local
+
+[tomcat] 
+localhost ansible_connection=local

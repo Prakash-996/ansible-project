@@ -1,0 +1,19 @@
+---
+# tasks file for nginx
+- name: Install Nginx
+  yum:
+    name: nginx
+    state: present
+
+- name: Deploy template file
+  template:
+    src: index.j2
+    dest: /usr/share/nginx/html/index.html
+  notify: Restart Nginx
+
+- name: Ensure Nginx is running
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+

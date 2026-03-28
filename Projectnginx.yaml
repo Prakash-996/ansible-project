@@ -1,0 +1,12 @@
+- hosts: nginx
+  become: true
+  
+  roles:
+    - nginx
+
+- hosts: tomcat
+  become: true
+  
+  roles:
+    - tomcat
+   

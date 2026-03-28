@@ -1,0 +1,6 @@
+---
+# vars file for nginx
+title: "Prakash DevOps Project"
+name: "Prakash"
+env: "Production"
+
