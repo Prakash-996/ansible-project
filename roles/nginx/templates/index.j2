@@ -1,3 +1,9 @@
-<h1>{{ title }}</h1>
-<p>Deployed by {{ name }}</p>
-<p>Environment: {{ env }}</p>
+server {
+    listen 80;
+
+    location / {
+        proxy_pass http://172.31.38.79:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
