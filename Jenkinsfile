@@ -38,12 +38,12 @@ pipeline {
                 }
             }
         }
-        stage('Verify Deployment') { 
-            steps { 
-                sh 'curl -I http://<52.66.73.212>'
-            } 
+        
+        stage('Verify Deployment') {
+            steps {
+                sh 'curl -I http://52.66.73.212'
+            }
         }
-    }
 
     post {
         success { echo "✅ Pipeline completed successfully!" }
