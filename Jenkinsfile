@@ -44,7 +44,7 @@ pipeline {
                 sh 'curl -I http://52.66.73.212'
             }
         }
-
+    }
     post {
         success { echo "✅ Pipeline completed successfully!" }
         failure { echo "❌ Pipeline failed. Check the errors above." }
