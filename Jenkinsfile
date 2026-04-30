@@ -4,6 +4,9 @@ pipeline {
     environment {
         ANSIBLE_USER = "ec2-user"
     }
+    options {
+        timeout(time: 10, unit: 'MINUTES') 
+    }
 
     stages {
 
@@ -22,12 +25,23 @@ pipeline {
             }
         }
 
+        stage('Validate Ansible') { 
+            steps { 
+                sh 'ansible-playbook Projectnginx.yaml -i inventory --syntax-check' 
+            } 
+        }
+
         stage('Run Ansible Playbook') {
             steps {
                 sshagent(['ec2-key']) {
                     sh "ansible-playbook Projectnginx.yaml -i inventory -u \$ANSIBLE_USER"
                 }
             }
+        }
+        stage('Verify Deployment') { 
+            steps { 
+                sh 'curl -I http://<52.66.73.212>'
+            } 
         }
     }
 
