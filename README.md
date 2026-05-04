@@ -31,7 +31,7 @@ Ansible is used to configure Nginx and Tomcat servers, and Jenkins is used to au
 ## Setup Instructions
 
 ### Clone Repository
-git clone https://github.com/your-username/your-repo.git  
+git clone https://github.com/Prakash-996/ansible-project.git
 cd your-repo  
 
 ### Prerequisites
